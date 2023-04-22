@@ -6,6 +6,7 @@
 //  Copyright © 2019 Mohammad Azam. All rights reserved.
 //
 import Foundation
+import SwiftUI
 
 class Webservice {
     
@@ -51,6 +52,29 @@ struct StockViewModel {
     
     var change: String {
         return self.stock.change
+    }
+    
+}
+
+class StockListViewModel: ObservableObject {
+    
+    @Published var searchTerm: String = ""
+    @Published var stocks: [StockViewModel] = [StockViewModel]()
+    
+    func load() {
+        fetchStocks()
+    }
+    
+    private func fetchStocks() {
+        
+        Webservice().getStocks { stocks in
+            if let stocks = stocks {
+                DispatchQueue.main.async {
+                     self.stocks = stocks.map(StockViewModel.init)
+                }
+               
+            }
+        }
     }
     
 }
